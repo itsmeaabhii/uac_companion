@@ -65,45 +65,61 @@ class LocationConditionScreen extends StatelessWidget {
     required bool isRound,
     required bool isSelected,
   }) {
-    return GestureDetector(
-      onTap: () => LocationController.to.onSelectCondition(index),
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: isRound ? 4 : 6),
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? uac_colors.AppColors.green.withOpacity(0.2)
-              : uac_colors.AppColors.grayBlack,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisAlignment:
-              isRound ? MainAxisAlignment.center : MainAxisAlignment.start,
-          children: [
-            Icon(
-              _getLocationConditionIcon(type),
-              size: isRound ? 16 : 18,
-              color: isSelected ? uac_colors.AppColors.green : Colors.white,
-            ),
-            const SizedBox(width: 8),
-            Flexible(
-              child: Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize:
-                      isSelected ? (isRound ? 13 : 15) : (isRound ? 12 : 14),
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  color:
-                      isSelected ? uac_colors.AppColors.green : Colors.white,
+    return Obx(() {
+      final isLoading = LocationController.to.isLoadingLocation.value;
+      
+      return GestureDetector(
+        onTap: isLoading ? null : () => LocationController.to.onSelectCondition(index),
+        child: Container(
+          margin: EdgeInsets.symmetric(vertical: isRound ? 4 : 6),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? uac_colors.AppColors.green.withOpacity(0.2)
+                : uac_colors.AppColors.grayBlack,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            mainAxisAlignment:
+                isRound ? MainAxisAlignment.center : MainAxisAlignment.start,
+            children: [
+              if (isLoading && isSelected)
+                SizedBox(
+                  width: isRound ? 16 : 18,
+                  height: isRound ? 16 : 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      uac_colors.AppColors.green,
+                    ),
+                  ),
+                )
+              else
+                Icon(
+                  _getLocationConditionIcon(type),
+                  size: isRound ? 16 : 18,
+                  color: isSelected ? uac_colors.AppColors.green : Colors.white,
+                ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize:
+                        isSelected ? (isRound ? 13 : 15) : (isRound ? 12 : 14),
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    color:
+                        isSelected ? uac_colors.AppColors.green : Colors.white,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   IconData _getLocationConditionIcon(int type) {
