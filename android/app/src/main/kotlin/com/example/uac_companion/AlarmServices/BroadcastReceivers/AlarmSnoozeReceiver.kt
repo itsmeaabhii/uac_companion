@@ -25,8 +25,18 @@ class AlarmSnoozeReceiver : BroadcastReceiver() {
         Log.d(TAG, "Snoozing & uniqueSyncId: $uniqueSyncId for +5 minute...")
 
         // Stop current sound/vibration/notification
-        AlarmServiceHolder.ringtone?.stop()
-        AlarmServiceHolder.vibrator?.cancel()
+        AlarmServiceHolder.ringtone?.let { ringtone ->
+            if (ringtone.isPlaying) {
+                ringtone.stop()
+                Log.d(TAG, "Ringtone stopped")
+            }
+            AlarmServiceHolder.ringtone = null
+        }
+        AlarmServiceHolder.vibrator?.let { vibrator ->
+            vibrator.cancel()
+            Log.d(TAG, "Vibration cancelled")
+            AlarmServiceHolder.vibrator = null
+        }
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(NOTIFICATION_ID)
 
